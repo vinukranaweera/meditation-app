@@ -31,149 +31,183 @@
 ## Homepage
 
 The homepage features a personalized greeting, popular meditations with images, categories such as calmness, relaxation, and duration, as well as a daily featured meditation. Navigation includes a logo and a settings icon for easy access. The layout emphasizes quick access to tailored meditation sessions.
-
-1. *As a user, I want a personalized greeting with my name and a title, so that I feel welcomed and encouraged to meditate.*
-
-   * Acceptance Criteria:
-     
-     - Display “Hello, [username]” followed by the title “Find your perfect meditation.”
-
-2. *As a user, I want to see popular meditation cards, so that I can explore options based on my preferences.*
+    
+1. *As a user, I want to view an overview of my data on the home screen so that I can monitor my progress at a glance.*
 
    * Acceptance Criteria:
      
-     - Display cards with images, titles, descriptions, categories such as calmness, relaxation, and durations such as 10 or 15 minutes.
+     - Home screen displays key metrics (e.g., steps walked, calories burned).
+	   - Data is updated in real time.
+	   - Overview section is visible immediately upon opening the app.
 
-3. *As a user, I want a daily featured meditation, so that I can quickly access a recommended session.*
-
-   * Acceptance Criteria:
-     
-     - Showcase one meditation with an image, title, category, and duration in a dedicated section.
-
-4. *As a user, I want intuitive navigation icons, so that I can easily move around the app.*
+2. *As a new user, I want to see a quick introductory guide on the home screen so that I can learn how to use the app.*
 
    * Acceptance Criteria:
      
-     - Display a logo in the top-left corner and a settings icon in the top-right corner for navigation.
+     - Intro guide appears only for first-time users or until dismissed.
+     - Guide explains key features in a carousel or step-by-step format.
+	   - User can skip or revisit the guide from the settings menu.
+    
+3. *As a user, I want to access my most-used features from the home screen so that I can navigate the app efficiently.*
+
+   * Acceptance Criteria:
+     
+     - Home screen displays shortcuts to commonly used features.
+	   - Tapping a shortcut opens the respective feature directly.
        
 ## Detailed Screen
 
 When the user opens the detailed exercise page, they'll first see a large banner image representing the meditation exercise at the top. Below the image, they'll find the exercise title "Mindful Breathing" along with categories such as Calmness and the duration of the exercise.
 
-1. *As a user, I want an “About” section for each exercise, so that I can understand its benefits and purpose.*
+1. *As a user, I want detailed information on a selected item so that I can make informed decisions.*
 
    * Acceptance Criteria:
      
-     - Display a brief description of the exercise, explaining its focus and stress-reducing benefits.
+     - Detail screen displays product images, specifications, reviews, and price.
+	   - Information is accurate and fetched from the database or API.
+	   - Layout is clear and supports scrolling if content is long.
 
-2. *As a user, I want an “Instructions” section for each exercise, so that I can perform it correctly.*
-
-   * Acceptance Criteria:
-     
-     - Provide step-by-step guidance on posture and breathing techniques for the exercise.
-
-3. *As a user, I want an “Add to Favorites” button, so that I can easily save an exercise for future practice.*
+2. *As a user, I want to perform actions like saving or sharing an item from the detail screen so that I can share interesting content.*
 
    * Acceptance Criteria:
      
-     - Include a prominent “Add to Favorites” button at the bottom of the page.
+     - A “Save” button adds the item to favorites.
+     - A “Share” button allows sharing via social media or messaging.
+	   - Confirmation is displayed after saving or sharing.
 
-4. *As a user, I want navigation icons for sharing and going back, so that I can easily manage the exercise page.*
+3. *As a user, I want to view related items on the detail screen so that I can explore more options.*
 
    * Acceptance Criteria:
      
-     - Display a back icon and a share icon at the top of the page for easy navigation.
+     - Related items section appears below main details.
+	   - Tapping a related item opens its detail screen.
        
-## Add to Favorites
+## Persistent Data
 
-From a user's perspective, the favorites feature provides a seamless and interactive way to manage personal preferences. Here's how the user experiences this feature:
+Data persistence ensures that user preferences and app state remain intact across sessions. It improves usability by eliminating the need for repeated setups and ensures seamless functionality over time.
 
-1. *As a user, I want to add an item to my Favorites, so that I can save activities or articles I like for quick access later.*
-
-   * Acceptance Criteria:
-     
-     - A heart icon with the text “Add to Favorites” is displayed next to each item.
-     - The outlined heart indicates the item is not in Favorites.
-     - Tapping the button adds the item to the Favorites list, updates the button text to “Remove from Favorites,” and changes the heart icon to filled.
-
-2. *As a user, I want to remove an item from my Favorites, so that I can manage my saved content.*
+1. *As a user, I want my data like login state to persist across sessions so that I don't need to re-enter details every time.*
 
    * Acceptance Criteria:
      
-     - The “Remove from Favorites” button with a filled heart is displayed for items already in Favorites.
-     - Tapping the button removes the item from the Favorites list and reverts the heart icon to outlined.
-     - Users can add or remove items anytime, and the button text updates accordingly.
+     - App remembers login state unless user logs out.
+	   - User remains logged in after app restarts.
+	   - Logout option is available to clear session.
 
-3. *As a user, I want a “My Favorites” screen, so that I can view and manage all my saved items in one place.*
-
-   * Acceptance Criteria:
-     
-     - The “My Favorites” screen displays a list of saved items with their title, category, and duration.
-     - Users can tap any item to view details or start the activity.
-     - The Favorites list remains organized for easy browsing and quick access.
-
-## Daily Reminders
-
-This setup allows users to manage reminders for specific activities, such as meditation, with a straightforward interface for setting dates and times.
-
-1. *As a user, I want to view the calendar for the current month and navigate between months, so that I can easily select dates for reminders.*
+2. *As a user, I want to save my preferences such as dark mode so that the app remembers my settings.*
 
    * Acceptance Criteria:
      
-     - Display the current month with all the days visible.
-     - Provide navigation arrows to move between months.
+     - Preferences (e.g., dark mode, language) are saved locally.
+	   - Saved preferences are applied automatically when the app starts.
+	   - User can change preferences from settings at any time.
 
-2. *As a user, I want to select a date and time for a reminder, so that I can schedule it properly.*
-
-   * Acceptance Criteria:
-     
-     - Display a default text “Selected Date: None” and “Selected Time: 20:44” to indicate no date has been selected but a time is chosen.
-     - Allow users to select a specific time and date.
-
-3. *As a user, I want to add a reminder after selecting a time, so that I can schedule it for a future date and time.*
+3. *As an admin, I want user activity logs to persist so that I can track and analyze trends over time.*
 
    * Acceptance Criteria:
      
-     - After selecting a time, users can click the “Add Reminder” button to schedule the reminder.
+     - Activity logs are stored securely in persistent storage.
+	   - Logs remain available after app restart or update.
+     - Admin can retrieve logs for analysis.
 
-4. *As a user, I want to see a list of all my reminders, so that I can manage them easily.*
+## External API Integration
+
+External APIs enhance app functionality by allowing integration with third-party services, such as weather updates, map services, or payment gateways. Integrating APIs enables the app to fetch real-time data or provide advanced capabilities without reinventing the wheel. This makes the app more dynamic and user-centric.
+
+1. *As a user, I want to receive a daily mindfulness quote from an API so that I can start my day with inspiration.*
 
    * Acceptance Criteria:
      
-     - Display a list of all reminders with the selected date and time.
-     - Provide an option to delete a reminder by clicking the red “Delete” button next to it.
+     - App integrates with a mindfulness or quote API.
+	   - Quote appears on the home screen each morning.
+	   - Users can share the quote directly on social media.
     
-## Sharing Exercises
+## Settings Menu
 
-These user stories ensure that the sharing functionality is user-friendly, accessible, and efficient.
+A settings menu provides users with control over app preferences, allowing them to tailor their experience. It acts as a centralized location for managing app configurations, such as notifications, privacy, and themes. A well-organized settings menu improves usability and user satisfaction.
 
-1. *As a user, I want to easily share recommended exercises with friends or family, so that I can help others discover helpful activities.*
+1. *As a user, I want to access a settings menu from any screen so that I can adjust preferences at my convenience.*
 
    * Acceptance Criteria:
      
-     - Provide a clear share button/icon on the exercise detail page for easy sharing.
-     - Allow users to share exercises via multiple platforms (e.g., social media, email, or messaging apps).
+     - Settings icon is available on all screens.
+	   - Clicking the icon opens the settings menu instantly.
+    
+2. *As a user, I want to see categorized sections in the settings menu so that I can quickly find the options I need.*
+
+   * Acceptance Criteria:
+     
+     - Settings menu has clearly labeled categories (e.g., Profile, Notifications).
+	   - Categories expand to reveal specific settings.
+	   - User can collapse categories for cleaner navigation.
+    
+3. *As an admin, I want to enable or disable certain settings for users so that I can maintain app security and compliance.*
+
+   * Acceptance Criteria:
+     
+     - Admin can toggle visibility of sensitive settings.
+	   - Disabled settings are not editable by regular users.
+	   - Changes take effect immediately across the app.
        
-## Logout
+## Settings Screen
 
-These user stories allow users to securely log out of their accounts, clearing session data and redirecting them to the login page.
+The settings screen is where users interact with the settings menu in detail. It allows users to make precise adjustments, like changing themes, enabling dark mode, or setting privacy preferences. A clean, responsive settings screen ensures a seamless user experience.
 
-1. *As a user, I want a clear and visible logout button, so that I can easily log out of my account when I’m done using the app.*
-
-   * Acceptance Criteria:
-     
-     - Display a clear and visible “Logout” button in the app.
-     - Tapping the button logs the user out and redirects them to the login page.
-     - User session data is cleared upon logout to ensure secure access.
-
-## Change Settings
-
-These user stories outline the essential features that enhance user experience and personalization within the app. A critical aspect of this experience is the ability for users to customize the app's appearance to suit their needs and preferences.
-
-1. *As a user, I want to switch between light and dark themes, so that I can reduce eye strain and customize the app’s visual experience.*
+1. *As a user, I want to enable dark mode in the settings screen so that I can reduce eye strain during nighttime usage.*
 
    * Acceptance Criteria:
      
-     - Provide a “Theme” toggle or switch in the settings section for light and dark mode options.
-     - Allow the user to switch between light and dark mode seamlessly.
-     - The theme should change immediately without needing to refresh or restart the app.
+     - Dark mode toggle is available in Appearance section.
+	   - Theme changes immediately when toggled.
+	   - Preference is saved and applied in future sessions.
+    
+2. *As a user, I want to adjust notification preferences so that I only receive alerts relevant to me.*
+
+   * Acceptance Criteria:
+     
+     - Settings screen has notification category options.
+	   - User can enable or disable specific categories.
+	   - Changes are saved and applied immediately.
+    
+3. *As a user, I want to update my email and password on the settings screen so that I can keep my account secure.*
+
+   * Acceptance Criteria:
+     
+     - Account Settings section allows email and password updates.
+	   - Validation ensures strong passwords and valid emails.
+	   - Confirmation is shown after successful update.
+
+## Notifications
+
+Notifications keep users informed about important updates, events, or reminders. Implementing notifications involves creating in-app or push alerts that are timely, relevant, and actionable. Well-designed notifications improve user engagement and retention.
+
+1. *As a user, I want to receive a daily reminder notification so that I don’t forget to complete my tasks.*
+
+   * Acceptance Criteria:
+     
+     - Display a default text “Selected Date: None” and “Selected Time: 20:44” to indicate no date has been selected but a time is        chosen.
+     - Allow users to select a specific time and date.
+    
+2. *As a user, I want to receive notifications about new features so that I can explore and benefit from them.*
+
+   * Acceptance Criteria:
+     
+     - Notifications are sent when a new feature is released.
+	   - Notification links to relevant feature page.
+	   - User can opt-out from these alerts in settings.
+    
+3. *As a user, I want to turn off promotional notifications so that I can focus on essential updates only.*
+
+   * Acceptance Criteria:
+     
+     - Promotional notifications can be toggled off in settings.
+	   - Essential notifications remain unaffected.
+	   - Setting is saved and applied across sessions.
+    
+4. *As an admin, I want to send notifications to specific user groups so that I can target them with relevant information.*
+
+   * Acceptance Criteria:
+     
+     - Admin panel allows selection of target user groups.
+	   - Notifications are sent only to chosen groups.
+	   - Delivery status is visible to the admin.
