@@ -37,8 +37,8 @@ The homepage features a personalized greeting, popular meditations with images, 
    * Acceptance Criteria:
      
      - Home screen displays key metrics (e.g., steps walked, calories burned).
-	   - Data is updated in real time.
-	   - Overview section is visible immediately upon opening the app.
+	 - Data is updated in real time.
+	 - Overview section is visible immediately upon opening the app.
 
 2. *As a new user, I want to see a quick introductory guide on the home screen so that I can learn how to use the app.*
 
@@ -46,14 +46,14 @@ The homepage features a personalized greeting, popular meditations with images, 
      
      - Intro guide appears only for first-time users or until dismissed.
      - Guide explains key features in a carousel or step-by-step format.
-	   - User can skip or revisit the guide from the settings menu.
+	 - User can skip or revisit the guide from the settings menu.
     
 3. *As a user, I want to access my most-used features from the home screen so that I can navigate the app efficiently.*
 
    * Acceptance Criteria:
      
      - Home screen displays shortcuts to commonly used features.
-	   - Tapping a shortcut opens the respective feature directly.
+	 - Tapping a shortcut opens the respective feature directly.
        
 ## Detailed Screen
 
@@ -64,8 +64,8 @@ When the user opens the detailed exercise page, they'll first see a large banner
    * Acceptance Criteria:
      
      - Detail screen displays product images, specifications, reviews, and price.
-	   - Information is accurate and fetched from the database or API.
-	   - Layout is clear and supports scrolling if content is long.
+	 - Information is accurate and fetched from the database or API.
+	 - Layout is clear and supports scrolling if content is long.
 
 2. *As a user, I want to perform actions like saving or sharing an item from the detail screen so that I can share interesting content.*
 
@@ -73,14 +73,14 @@ When the user opens the detailed exercise page, they'll first see a large banner
      
      - A “Save” button adds the item to favorites.
      - A “Share” button allows sharing via social media or messaging.
-	   - Confirmation is displayed after saving or sharing.
+	 - Confirmation is displayed after saving or sharing.
 
 3. *As a user, I want to view related items on the detail screen so that I can explore more options.*
 
    * Acceptance Criteria:
      
      - Related items section appears below main details.
-	   - Tapping a related item opens its detail screen.
+	 - Tapping a related item opens its detail screen.
        
 ## Persistent Data
 
@@ -91,23 +91,23 @@ Data persistence ensures that user preferences and app state remain intact acros
    * Acceptance Criteria:
      
      - App remembers login state unless user logs out.
-	   - User remains logged in after app restarts.
-	   - Logout option is available to clear session.
+	 - User remains logged in after app restarts.
+	 - Logout option is available to clear session.
 
 2. *As a user, I want to save my preferences such as dark mode so that the app remembers my settings.*
 
    * Acceptance Criteria:
      
      - Preferences (e.g., dark mode, language) are saved locally.
-	   - Saved preferences are applied automatically when the app starts.
-	   - User can change preferences from settings at any time.
+	 - Saved preferences are applied automatically when the app starts.
+	 - User can change preferences from settings at any time.
 
 3. *As an admin, I want user activity logs to persist so that I can track and analyze trends over time.*
 
    * Acceptance Criteria:
      
      - Activity logs are stored securely in persistent storage.
-	   - Logs remain available after app restart or update.
+	 - Logs remain available after app restart or update.
      - Admin can retrieve logs for analysis.
 
 ## External API Integration
@@ -119,8 +119,8 @@ External APIs enhance app functionality by allowing integration with third-party
    * Acceptance Criteria:
      
      - App integrates with a mindfulness or quote API.
-	   - Quote appears on the home screen each morning.
-	   - Users can share the quote directly on social media.
+	 - Quote appears on the home screen each morning.
+	 - Users can share the quote directly on social media.
     
 ## Settings Menu
 
@@ -131,23 +131,23 @@ A settings menu provides users with control over app preferences, allowing them 
    * Acceptance Criteria:
      
      - Settings icon is available on all screens.
-	   - Clicking the icon opens the settings menu instantly.
+	 - Clicking the icon opens the settings menu instantly.
     
 2. *As a user, I want to see categorized sections in the settings menu so that I can quickly find the options I need.*
 
    * Acceptance Criteria:
      
      - Settings menu has clearly labeled categories (e.g., Profile, Notifications).
-	   - Categories expand to reveal specific settings.
-	   - User can collapse categories for cleaner navigation.
+	 - Categories expand to reveal specific settings.
+	 - User can collapse categories for cleaner navigation.
     
 3. *As an admin, I want to enable or disable certain settings for users so that I can maintain app security and compliance.*
 
    * Acceptance Criteria:
      
      - Admin can toggle visibility of sensitive settings.
-	   - Disabled settings are not editable by regular users.
-	   - Changes take effect immediately across the app.
+	 - Disabled settings are not editable by regular users.
+	 - Changes take effect immediately across the app.
        
 ## Settings Screen
 
@@ -158,24 +158,24 @@ The settings screen is where users interact with the settings menu in detail. It
    * Acceptance Criteria:
      
      - Dark mode toggle is available in Appearance section.
-	   - Theme changes immediately when toggled.
-	   - Preference is saved and applied in future sessions.
+	 - Theme changes immediately when toggled.
+	 - Preference is saved and applied in future sessions.
     
 2. *As a user, I want to adjust notification preferences so that I only receive alerts relevant to me.*
 
    * Acceptance Criteria:
      
      - Settings screen has notification category options.
-	   - User can enable or disable specific categories.
-	   - Changes are saved and applied immediately.
+	 - User can enable or disable specific categories.
+	 - Changes are saved and applied immediately.
     
 3. *As a user, I want to update my email and password on the settings screen so that I can keep my account secure.*
 
    * Acceptance Criteria:
      
      - Account Settings section allows email and password updates.
-	   - Validation ensures strong passwords and valid emails.
-	   - Confirmation is shown after successful update.
+	 - Validation ensures strong passwords and valid emails.
+	 - Confirmation is shown after successful update.
 
 ## Notifications
 
@@ -193,21 +193,21 @@ Notifications keep users informed about important updates, events, or reminders.
    * Acceptance Criteria:
      
      - Notifications are sent when a new feature is released.
-	   - Notification links to relevant feature page.
-	   - User can opt-out from these alerts in settings.
+	 - Notification links to relevant feature page.
+	 - User can opt-out from these alerts in settings.
     
 3. *As a user, I want to turn off promotional notifications so that I can focus on essential updates only.*
 
    * Acceptance Criteria:
      
      - Promotional notifications can be toggled off in settings.
-	   - Essential notifications remain unaffected.
-	   - Setting is saved and applied across sessions.
+	 - Essential notifications remain unaffected.
+	 - Setting is saved and applied across sessions.
     
 4. *As an admin, I want to send notifications to specific user groups so that I can target them with relevant information.*
 
    * Acceptance Criteria:
      
      - Admin panel allows selection of target user groups.
-	   - Notifications are sent only to chosen groups.
-	   - Delivery status is visible to the admin.
+	 - Notifications are sent only to chosen groups.
+	 - Delivery status is visible to the admin.
