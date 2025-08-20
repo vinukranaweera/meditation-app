@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, View } from "react-native";
 import { COLORS, SIZES } from "../constants/theme";
-import Welcome from "../components/Welcome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ScreenHeaderBtn from "../components/ScreenHeaderBtn";
+import Welcome from "../components/Welcome";
 import PopularMeditation from "../components/PopularMeditation";
 import DailyMeditation from "../components/DailyMeditation";
 import DailyQuote from "../components/DailyQuote";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTheme } from "../context/ThemeProvider";
 
 const Home = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -17,13 +18,23 @@ const Home = () => {
 
   const loadUserDetails = async () => {
     const user = await AsyncStorage.getItem("userDetails");
-    console.log("user", user);
+   // console.log("user", user);
     setUserDetails(user);
   };
+  const { theme, toggleTheme } = useTheme();
+  console.log("theme", theme);
 
+  const isDarkMode = theme === "dark";
   return (
     <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: isDarkMode
+            ? COLORS.darkBackground
+            : COLORS.lightWhite,
+        }}
+      >
         <ScreenHeaderBtn />
         <ScrollView showsVerticalScrollIndicator={false}>
           <View
@@ -33,16 +44,12 @@ const Home = () => {
             }}
             testID="screensDisplay"
           >
-            {/* <Welcome
+            <Welcome
               userDetails={userDetails ? JSON.parse(userDetails) : null}
               isDarkMode={isDarkMode}
             />
-            <DailyQuote />
-            <PopularMeditation isDarkMode={isDarkMode} />
+            {/* <PopularMeditation isDarkMode={isDarkMode} />
             <DailyMeditation isDarkMode={isDarkMode} /> */}
-            <Welcome
-              userDetails={userDetails ? JSON.parse(userDetails) : null}
-            />
             <DailyQuote />
             <PopularMeditation />
             <DailyMeditation />
