@@ -13,7 +13,13 @@ import DailyMeditation from "../../components/DailyMeditation";
 import { useFocusEffect } from "expo-router";
 import ScreenHeaderBtn from "../../components/ScreenHeaderBtn";
 
-const Favourites = () => {
+const getThemeStyles = (isDark) => ({
+    container: {
+      backgroundColor: isDark ? COLORS.darkBackground : COLORS.lightWhite,
+    },
+  });
+
+const Favourites = ({ isDark }) => {
   const [favorites, setFavorites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,6 +41,8 @@ const Favourites = () => {
     }, [])
   );
 
+  const themeStyles = getThemeStyles(isDark);
+
   const styles = StyleSheet.create({
     container: {
       marginTop: SIZES.xLarge,
@@ -50,10 +58,11 @@ const Favourites = () => {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.darkBackground }}>
+    <SafeAreaView style={[{ flex: 1 }, themeStyles.container]}>
       <ScreenHeaderBtn />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
+        <View style={styles.container}> 
+        {/* <View style={[styles.container, themeStyles.container]}> */}
           {isLoading ? (
             <ActivityIndicator size="large" color={COLORS.primary} />
           ) : favorites.length === 0 ? (

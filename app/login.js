@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   Image,
   Alert,
+  Platform,
   Text,
   TextInput,
   TouchableOpacity,
@@ -17,9 +18,17 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  const showAlert = (title, message) => {
+    if (Platform.OS === "web") {
+      window.alert(`${title}\n\n${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Validation Error", "Please fill in all fields.");
+      showAlert("Validation Error", "Please fill in all fields.");
       return;
     }
 
@@ -31,21 +40,21 @@ const Login = () => {
       const detailsDatafromSignup = await AsyncStorage.getItem("userDetails");
       if (detailsDatafromSignup) {
         const parsedDetails = JSON.parse(detailsDatafromSignup);
+
         if (
           userDetails.email === parsedDetails.email &&
           userDetails.password === parsedDetails.password
         ) {
           router.push("/home");
         } else {
-          Alert.alert("Error", "Incorrect email or password.");
-          alert("Error Incorrect email or password.");
+          showAlert("Error", "Incorrect email or password.");
         }
       } else {
-        Alert.alert("Error", "No user details found in AsyncStorage.");
-        alert("Error No user details found in AsyncStorage.");
+        showAlert("Error", "No user details found in AsyncStorage.");
       }
     } catch (error) {
       console.error("Error accessing AsyncStorage", error);
+      showAlert("Error", "Something went wrong while logging in.");
     }
   };
 

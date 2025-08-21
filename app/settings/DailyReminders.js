@@ -28,6 +28,12 @@ const DailyReminders = () => {
   const [manualTime, setManualTime] = useState("");
   const [userDetails, setUserDetails] = useState(null);
 
+  useEffect(() => {
+    requestPermissions();
+    loadUserDetails();
+    loadReminders();
+  }, []);
+
   const requestPermissions = async () => {
     const { status } = await Notifications.requestPermissionsAsync();
     if (status !== "granted") {
@@ -52,15 +58,67 @@ const DailyReminders = () => {
     setReminders(futureReminders);
   };
 
+  // const handleAddReminder = async () => {
+  //   if (!selectedDate) {
+  //     alert("Please select a date.");
+  //     return;
+  //   }
+  //   const [inputHours, inputMinutes] = manualTime
+  //     .split(":")
+  //     .map((item) => parseInt(item, 10));
+  //   const triggerDate = new Date(selectedDate);
+  //   if (!isNaN(inputHours) && !isNaN(inputMinutes)) {
+  //     triggerDate.setHours(inputHours, inputMinutes, 0, 0);
+  //   } else {
+  //     triggerDate.setHours(
+  //       selectedTime.getHours(),
+  //       selectedTime.getMinutes(),
+  //       0,
+  //       0
+  //     );
+  //   }
+  //   if (triggerDate <= new Date()) {
+  //     alert("Please select a future time.");
+  //     return;
+  //   }
+  //   const newReminder = {
+  //     id: Date.now(),
+  //     date: selectedDate,
+  //     time:
+  //       manualTime ||
+  //       triggerDate.toLocaleTimeString([], {
+  //         hour: "2-digit",
+  //         minute: "2-digit",
+  //       }),
+  //     description: `Reminder: Time for your daily task!`,
+  //     triggerDate: triggerDate.toISOString(),
+  //   };
+  //   try {
+  //     const updatedReminders = [...reminders, newReminder];
+  //     await AsyncStorage.setItem("reminders", JSON.stringify(updatedReminders));
+  //     setReminders(updatedReminders);
+  //     await scheduleNotification(newReminder);
+  //     alert("Reminder added successfully!");
+  //   } catch (error) {
+  //     alert("Error adding reminder.");
+  //   }
+  // };
+
   const handleAddReminder = async () => {
     if (!selectedDate) {
       alert("Please select a date.");
       return;
     }
+
+    // Parse selectedDate ("YYYY-MM-DD") as local date, not UTC
+    const [year, month, day] = selectedDate.split("-").map(Number);
+    const triggerDate = new Date(year, month - 1, day);
+
+    // Apply manual time if provided, otherwise use selectedTime
     const [inputHours, inputMinutes] = manualTime
       .split(":")
       .map((item) => parseInt(item, 10));
-    const triggerDate = new Date(selectedDate);
+
     if (!isNaN(inputHours) && !isNaN(inputMinutes)) {
       triggerDate.setHours(inputHours, inputMinutes, 0, 0);
     } else {
@@ -71,10 +129,14 @@ const DailyReminders = () => {
         0
       );
     }
-    if (triggerDate <= new Date()) {
+
+    // Validation: must be in the future
+    const now = new Date();
+    if (triggerDate <= now) {
       alert("Please select a future time.");
       return;
     }
+
     const newReminder = {
       id: Date.now(),
       date: selectedDate,
@@ -87,6 +149,7 @@ const DailyReminders = () => {
       description: `Reminder: Time for your daily task!`,
       triggerDate: triggerDate.toISOString(),
     };
+
     try {
       const updatedReminders = [...reminders, newReminder];
       await AsyncStorage.setItem("reminders", JSON.stringify(updatedReminders));

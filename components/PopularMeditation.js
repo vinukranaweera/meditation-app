@@ -79,6 +79,7 @@ const PopularMeditation = () => {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
+      marginTop: SIZES.xLarge,
     },
     headerTitle: {
       fontSize: SIZES.large,
