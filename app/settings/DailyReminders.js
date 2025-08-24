@@ -210,7 +210,10 @@ const DailyReminders = () => {
         backgroundColor: isDark ? COLORS.darkBackground : COLORS.lightWhite,
       }}
     >
-      <Stack.Screen options={{ headerTitle: "Daily Reminders" }} />
+      {/* <Stack.Screen options={{ 
+        // headerTitle: "Daily Reminders", 
+        header: () => <ScreenHeaderBtn />
+      }} /> */}
       <ScreenHeaderBtn />
       <ScrollView contentContainerStyle={{ padding: SIZES.medium }}>
         <Calendar
