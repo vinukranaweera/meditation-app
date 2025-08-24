@@ -12,15 +12,30 @@ import {
 } from "react-native";
 import { Stack } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ScreenHeaderBtn from "../../components/ScreenHeaderBtn";
 import { Calendar } from "react-native-calendars";
 import * as Notifications from "expo-notifications";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { COLORS, SIZES } from "../../constants";
 import { useTheme } from "../../context/ThemeProvider";
 
+const getThemeStyles = (isDark) => ({
+    input: {
+      borderColor: isDark ? COLORS.lightWhite : COLORS.primary,
+      color: isDark ? COLORS.lightWhite : COLORS.darkBackground,
+    },
+    selected: {
+      color: isDark ? COLORS.lightWhite : COLORS.primary,
+    },
+    reminderHeader: {
+      color: isDark ? COLORS.lightWhite : COLORS.primary,
+    }
+  });
+
 const DailyReminders = () => {
   const { theme } = useTheme();
-  const isDarkMode = theme === "dark";
+  const isDark = theme === "dark";
+  const themeStyles = getThemeStyles(isDark);
   const [reminders, setReminders] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(new Date());
@@ -57,52 +72,6 @@ const DailyReminders = () => {
     );
     setReminders(futureReminders);
   };
-
-  // const handleAddReminder = async () => {
-  //   if (!selectedDate) {
-  //     alert("Please select a date.");
-  //     return;
-  //   }
-  //   const [inputHours, inputMinutes] = manualTime
-  //     .split(":")
-  //     .map((item) => parseInt(item, 10));
-  //   const triggerDate = new Date(selectedDate);
-  //   if (!isNaN(inputHours) && !isNaN(inputMinutes)) {
-  //     triggerDate.setHours(inputHours, inputMinutes, 0, 0);
-  //   } else {
-  //     triggerDate.setHours(
-  //       selectedTime.getHours(),
-  //       selectedTime.getMinutes(),
-  //       0,
-  //       0
-  //     );
-  //   }
-  //   if (triggerDate <= new Date()) {
-  //     alert("Please select a future time.");
-  //     return;
-  //   }
-  //   const newReminder = {
-  //     id: Date.now(),
-  //     date: selectedDate,
-  //     time:
-  //       manualTime ||
-  //       triggerDate.toLocaleTimeString([], {
-  //         hour: "2-digit",
-  //         minute: "2-digit",
-  //       }),
-  //     description: `Reminder: Time for your daily task!`,
-  //     triggerDate: triggerDate.toISOString(),
-  //   };
-  //   try {
-  //     const updatedReminders = [...reminders, newReminder];
-  //     await AsyncStorage.setItem("reminders", JSON.stringify(updatedReminders));
-  //     setReminders(updatedReminders);
-  //     await scheduleNotification(newReminder);
-  //     alert("Reminder added successfully!");
-  //   } catch (error) {
-  //     alert("Error adding reminder.");
-  //   }
-  // };
 
   const handleAddReminder = async () => {
     if (!selectedDate) {
@@ -207,7 +176,7 @@ const DailyReminders = () => {
     description: { color: COLORS.lightWhite, fontWeight: "bold" },
     date: { color: COLORS.darkText, fontSize: SIZES.small },
     input: {
-      borderColor: COLORS.primary,
+      //borderColor: COLORS.primary,
       borderWidth: 1,
       padding: SIZES.small,
       marginVertical: SIZES.small,
@@ -215,7 +184,7 @@ const DailyReminders = () => {
     selected: {
       fontSize: SIZES.medium,
       marginVertical: SIZES.small,
-      color: COLORS.primary,
+      //color: COLORS.primary,
     },
     button: {
       backgroundColor: COLORS.primary,
@@ -229,7 +198,7 @@ const DailyReminders = () => {
     reminderHeader: {
       fontSize: SIZES.large,
       fontWeight: "bold",
-      color: COLORS.primary,
+      //color: COLORS.primary,
       marginVertical: SIZES.medium,
     },
   });
@@ -238,10 +207,11 @@ const DailyReminders = () => {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: isDarkMode ? COLORS.darkBackground : COLORS.lightWhite,
+        backgroundColor: isDark ? COLORS.darkBackground : COLORS.lightWhite,
       }}
     >
       <Stack.Screen options={{ headerTitle: "Daily Reminders" }} />
+      <ScreenHeaderBtn />
       <ScrollView contentContainerStyle={{ padding: SIZES.medium }}>
         <Calendar
           onDayPress={(day) => setSelectedDate(day.dateString)}
@@ -267,11 +237,11 @@ const DailyReminders = () => {
           onChangeText={setManualTime}
           keyboardType="numeric"
           maxLength={5}
-          style={styles.input}
+          style={[styles.input, themeStyles.input]}
         />
 
-        <Text style={styles.selected}>Date: {selectedDate || "None"}</Text>
-        <Text style={styles.selected}>
+        <Text style={[styles.selected, themeStyles.selected]}>Date: {selectedDate || "None"}</Text>
+        <Text style={[styles.selected, themeStyles.selected]}>
           Time:{" "}
           {manualTime ||
             selectedTime.toLocaleTimeString([], {
@@ -284,7 +254,7 @@ const DailyReminders = () => {
           <Text style={styles.buttonText}>Add Reminder</Text>
         </TouchableOpacity>
 
-        <Text style={styles.reminderHeader}>All Reminders:</Text>
+        <Text style={[styles.reminderHeader, themeStyles.reminderHeader]}>All Reminders:</Text>
         {reminders.length > 0 ? (
           reminders.map((rem) => <Reminder key={rem.id} item={rem} />)
         ) : (

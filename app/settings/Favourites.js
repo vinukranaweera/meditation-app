@@ -12,16 +12,24 @@ import { COLORS, FONT, SIZES } from "../../constants";
 import DailyMeditation from "../../components/DailyMeditation";
 import { useFocusEffect } from "expo-router";
 import ScreenHeaderBtn from "../../components/ScreenHeaderBtn";
+import { useTheme } from "../../context/ThemeProvider";
 
 const getThemeStyles = (isDark) => ({
     container: {
       backgroundColor: isDark ? COLORS.darkBackground : COLORS.lightWhite,
     },
+    text: {
+    color: isDark ? COLORS.darkText : COLORS.secondary,
+  }
   });
 
-const Favourites = ({ isDark }) => {
+const Favourites = () => {
   const [favorites, setFavorites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const themeStyles = getThemeStyles(isDark);
 
   const loadFavorites = async () => {
     try {
@@ -40,8 +48,6 @@ const Favourites = ({ isDark }) => {
       loadFavorites();
     }, [])
   );
-
-  const themeStyles = getThemeStyles(isDark);
 
   const styles = StyleSheet.create({
     container: {

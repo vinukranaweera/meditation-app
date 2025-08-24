@@ -1,17 +1,20 @@
 import { View, Text, StyleSheet } from "react-native";
 import { COLORS, FONT, SIZES } from "../constants/theme";
+import { useTheme } from "../context/ThemeProvider";
 
 const getThemeStyles = (isDark) => ({
   userName: {
     color: isDark ? COLORS.lightWhite : COLORS.primary,
   },
   welcomeMessage: {
-    color: isDark ? COLORS.lightText : COLORS.primary,
+    color: isDark ? COLORS.lightWhite : COLORS.primary,
   },
 });
 
-const Welcome = ({ userDetails, isDark }) => {
+const Welcome = ({ userDetails }) => {
   //console.log("userDetails", userDetails?.userName);
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const themeStyles = getThemeStyles(isDark);
 
   const styles = StyleSheet.create({

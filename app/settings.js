@@ -2,12 +2,29 @@ import React, { useEffect, useState } from "react";
 import { Image, SafeAreaView, Text, View } from "react-native";
 import { COLORS, FONT, icons, SHADOWS, SIZES } from "../constants";
 import { useRouter } from "expo-router";
+import { useColorScheme } from "react-native";
 import { ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ScreenHeaderBtn from "../components/ScreenHeaderBtn";
 import { TouchableOpacity } from "react-native";
+import { useTheme } from "../context/ThemeProvider"; 
+
+const getThemeStyles = (isDark) => ({
+  background: {
+    backgroundColor: isDark ? COLORS.darkBackground : COLORS.lightWhite,
+  },
+  text: {
+    color: isDark ? COLORS.darkText : COLORS.secondary,
+  }
+});
 
 const Settings = () => {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  //console.log("Dark:", COLORS.darkBackground, "Light:", COLORS.lightWhite);
+  //console.log("isDark", isDark);
+  const themeStyles = getThemeStyles(isDark);
+
   const [userDetails, setUserDetails] = useState(null);
   const router = useRouter();
   const settings = [
@@ -50,29 +67,28 @@ const Settings = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+    <SafeAreaView style={[{ flex: 1 }, themeStyles.background]}>
       <ScreenHeaderBtn />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1, padding: SIZES.medium }}>
           <View style={{ width: "100%" }} testID="userDetails">
             {userDetails && (
               <Text
-                style={{
+                style={[{
                   fontFamily: FONT.regular,
                   fontSize: SIZES.large,
-                  color: COLORS.secondary,
-                }}
+                }, 
+                themeStyles.text]}
               >
                 Hello {JSON.parse(userDetails).userName}!
               </Text>
             )}
             <Text
-              style={{
+              style={[{
                 fontFamily: FONT.bold,
                 fontSize: SIZES.xLarge,
-                color: COLORS.primary,
                 marginTop: 2,
-              }}
+              }, themeStyles.text]}
             >
               Would you like to change any settings?
             </Text>

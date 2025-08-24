@@ -10,9 +10,20 @@ import {
 } from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants/theme";
 import useFetch from "../hook/useFetch";
+import { useTheme } from "../context/ThemeProvider";
+
+const getThemeStyles = (isDark) => ({
+  headerTitle: {
+    color: isDark ? COLORS.lightWhite : COLORS.primary,
+  }
+});
 
 const DailyMeditation = ({ meditations }) => {
   const router = useRouter();
+
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const themeStyles = getThemeStyles(isDark);
 
   const { isLoading, error, bestMeditations } = useFetch("search", {
     query: "",
@@ -28,7 +39,7 @@ const DailyMeditation = ({ meditations }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Daily Meditation</Text>
+        <Text style={[styles.headerTitle, themeStyles.headerTitle]}>Daily Meditation</Text>
       </View>
 
       <View style={styles.cardsContainer}>
@@ -84,7 +95,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: SIZES.large,
     fontFamily: FONT.medium,
-    color: COLORS.primary,
   },
   cardsContainer: {
     marginTop: SIZES.medium,

@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { COLORS, FONT, SIZES } from "../constants/theme";
+import { useTheme } from "../context/ThemeProvider";
+
+const getThemeStyles = (isDark) => ({
+  quoteText: {
+    color: isDark ? COLORS.lightWhite : COLORS.primary,
+  },
+});
 
 const DailyQuote = () => {
   const [quote, setQuote] = useState("");
   const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const themeStyles = getThemeStyles(isDark);
 
   const fetchQuote = async () => {
     setLoading(true);
@@ -50,7 +61,7 @@ const DailyQuote = () => {
         <ActivityIndicator size="small" color="#0000ff" />
       ) : (
         <>
-          <Text style={styles.quoteText}>"{quote}"</Text>
+          <Text style={[styles.quoteText, themeStyles.quoteText]}>"{quote}"</Text>
         </>
       )}
     </View>

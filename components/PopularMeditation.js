@@ -12,8 +12,19 @@ import {
 } from "react-native";
 
 import useFetch from "../hook/useFetch";
+import { useTheme } from "../context/ThemeProvider";
+
+const getThemeStyles = (isDark) => ({
+  headerTitle: {
+    color: isDark ? COLORS.lightWhite : COLORS.primary,
+  }
+});
 
 const PopularMeditation = () => {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const themeStyles = getThemeStyles(isDark);
+
   const router = useRouter();
   const { data, isLoading, error } = useFetch("search", {
     query: "React developer",
@@ -84,7 +95,7 @@ const PopularMeditation = () => {
     headerTitle: {
       fontSize: SIZES.large,
       fontFamily: FONT.medium,
-      color: COLORS.primary,
+      // color: COLORS.primary,
     },
     headerBtn: {
       fontSize: SIZES.medium,
@@ -158,7 +169,7 @@ const PopularMeditation = () => {
     <>
       <View style={styles.container} testID="popularContainer">
         <View style={styles.header} testID="popularHeader">
-          <Text style={styles.headerTitle}>Popular Meditations</Text>
+          <Text style={[styles.headerTitle, themeStyles.headerTitle]}>Popular Meditations</Text>
           <TouchableOpacity></TouchableOpacity>
         </View>
         <View style={styles.cardsContainer}>
