@@ -6,6 +6,7 @@ import { useTheme } from "../../context/ThemeProvider";
 import { Switch, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import ScreenHeaderBtn from "../../components/ScreenHeaderBtn";
+import Profile from "./Profile";
 
 const ThemeChange = () => {
   //console.log("hello from themechange");
@@ -23,6 +24,7 @@ const ThemeChange = () => {
       }}
     >
       <ScreenHeaderBtn />
+      <Profile />
       <View
         style={{
           justifyContent: "space-between",

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Image, SafeAreaView, Text, View } from "react-native";
+import { Image, SafeAreaView, Text, View, Alert, Platform } from "react-native";
 import { COLORS, FONT, icons, SHADOWS, SIZES } from "../constants";
 import { useRouter } from "expo-router";
-import { useColorScheme } from "react-native";
 import { ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ScreenHeaderBtn from "../components/ScreenHeaderBtn";
 import { TouchableOpacity } from "react-native";
-import { useTheme } from "../context/ThemeProvider"; 
+import { useTheme } from "../context/ThemeProvider";
 
 const getThemeStyles = (isDark) => ({
   background: {
@@ -15,7 +14,7 @@ const getThemeStyles = (isDark) => ({
   },
   text: {
     color: isDark ? COLORS.darkText : COLORS.secondary,
-  }
+  },
 });
 
 const Settings = () => {
@@ -53,7 +52,7 @@ const Settings = () => {
 
   const loadUserDetails = async () => {
     const user = await AsyncStorage.getItem("userDetails");
-    console.log("user", user);
+    //console.log("user", user);
     setUserDetails(user);
   };
 
@@ -61,9 +60,31 @@ const Settings = () => {
     loadUserDetails();
   }, []);
 
+  const confirm = (title, message, confirmText = "Logout") => {
+    if (Platform.OS === "web") {
+      // Native browser confirm
+      return Promise.resolve(window.confirm(`${title}\n\n${message}`));
+    }
+    // Mobile: wrap Alert in a Promise
+    return new Promise((resolve) => {
+      Alert.alert(title, message, [
+        { text: "Cancel", style: "cancel", onPress: () => resolve(false) },
+        {
+          text: confirmText,
+          style: "destructive",
+          onPress: () => resolve(true),
+        },
+      ]);
+    });
+  };
+
   const handleLogout = async () => {
+    const ok = await confirm("Logout", "Are you sure you want to log out?");
+    if (!ok) return;
+
     await AsyncStorage.removeItem("userDetails");
-    router.push("/login");
+    // replace prevents navigating back into the app after logout
+    router.replace("/login");
   };
 
   return (
@@ -74,21 +95,26 @@ const Settings = () => {
           <View style={{ width: "100%" }} testID="userDetails">
             {userDetails && (
               <Text
-                style={[{
-                  fontFamily: FONT.regular,
-                  fontSize: SIZES.large,
-                }, 
-                themeStyles.text]}
+                style={[
+                  {
+                    fontFamily: FONT.regular,
+                    fontSize: SIZES.large,
+                  },
+                  themeStyles.text,
+                ]}
               >
                 Hello {JSON.parse(userDetails).userName}!
               </Text>
             )}
             <Text
-              style={[{
-                fontFamily: FONT.bold,
-                fontSize: SIZES.xLarge,
-                marginTop: 2,
-              }, themeStyles.text]}
+              style={[
+                {
+                  fontFamily: FONT.bold,
+                  fontSize: SIZES.xLarge,
+                  marginTop: 2,
+                },
+                themeStyles.text,
+              ]}
             >
               Would you like to change any settings?
             </Text>

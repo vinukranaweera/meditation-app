@@ -19,33 +19,38 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { COLORS, SIZES } from "../../constants";
 import { useTheme } from "../../context/ThemeProvider";
 
+// for repeat option
+import { Picker } from "@react-native-picker/picker";
+
 const getThemeStyles = (isDark) => ({
-    input: {
-      borderColor: isDark ? COLORS.lightWhite : COLORS.primary,
-      color: isDark ? COLORS.lightWhite : COLORS.darkBackground,
-    },
-    selected: {
-      color: isDark ? COLORS.lightWhite : COLORS.primary,
-    },
-    reminderHeader: {
-      color: isDark ? COLORS.lightWhite : COLORS.primary,
-    }
-  });
+  input: {
+    borderColor: isDark ? COLORS.lightWhite : COLORS.primary,
+    color: isDark ? COLORS.lightWhite : COLORS.darkBackground,
+  },
+  selected: {
+    color: isDark ? COLORS.lightWhite : COLORS.primary,
+  },
+  reminderHeader: {
+    color: isDark ? COLORS.lightWhite : COLORS.primary,
+  },
+});
 
 const DailyReminders = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const themeStyles = getThemeStyles(isDark);
+
   const [reminders, setReminders] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [manualTime, setManualTime] = useState("");
-  const [userDetails, setUserDetails] = useState(null);
+  const [description, setDescription] = useState("");
+  const [repeat, setRepeat] = useState(null); // new field
+  const [editingId, setEditingId] = useState(null); // track which reminder is being edited
 
   useEffect(() => {
     requestPermissions();
-    loadUserDetails();
     loadReminders();
   }, []);
 
@@ -59,31 +64,21 @@ const DailyReminders = () => {
     }
   };
 
-  const loadUserDetails = async () => {
-    const user = await AsyncStorage.getItem("userDetails");
-    setUserDetails(user ? JSON.parse(user) : {});
-  };
-
   const loadReminders = async () => {
     const storedReminders = await AsyncStorage.getItem("reminders");
     const allReminders = storedReminders ? JSON.parse(storedReminders) : [];
-    const futureReminders = allReminders.filter(
-      (reminder) => new Date(reminder.triggerDate) > new Date()
-    );
-    setReminders(futureReminders);
+    setReminders(allReminders);
   };
 
-  const handleAddReminder = async () => {
+  const handleSaveReminder = async () => {
     if (!selectedDate) {
       alert("Please select a date.");
       return;
     }
 
-    // Parse selectedDate ("YYYY-MM-DD") as local date, not UTC
     const [year, month, day] = selectedDate.split("-").map(Number);
     const triggerDate = new Date(year, month - 1, day);
 
-    // Apply manual time if provided, otherwise use selectedTime
     const [inputHours, inputMinutes] = manualTime
       .split(":")
       .map((item) => parseInt(item, 10));
@@ -99,15 +94,14 @@ const DailyReminders = () => {
       );
     }
 
-    // Validation: must be in the future
     const now = new Date();
     if (triggerDate <= now) {
       alert("Please select a future time.");
       return;
     }
 
-    const newReminder = {
-      id: Date.now(),
+    const reminder = {
+      id: editingId || Date.now(),
       date: selectedDate,
       time:
         manualTime ||
@@ -115,18 +109,31 @@ const DailyReminders = () => {
           hour: "2-digit",
           minute: "2-digit",
         }),
-      description: `Reminder: Time for your daily task!`,
+      description: description || "Reminder: Time for your daily task!",
       triggerDate: triggerDate.toISOString(),
+      repeat: repeat, // daily, weekly, monthly
     };
 
     try {
-      const updatedReminders = [...reminders, newReminder];
+      let updatedReminders;
+      if (editingId) {
+        // update existing
+        updatedReminders = reminders.map((r) =>
+          r.id === editingId ? reminder : r
+        );
+      } else {
+        // new
+        updatedReminders = [...reminders, reminder];
+      }
+
       await AsyncStorage.setItem("reminders", JSON.stringify(updatedReminders));
       setReminders(updatedReminders);
-      await scheduleNotification(newReminder);
-      alert("Reminder added successfully!");
+
+      await scheduleNotification(reminder);
+      alert(editingId ? "Reminder updated!" : "Reminder added!");
+      resetForm();
     } catch (error) {
-      alert("Error adding reminder.");
+      alert("Error saving reminder.");
     }
   };
 
@@ -138,9 +145,35 @@ const DailyReminders = () => {
         new Notification("Reminder", { body: reminder.description });
       }, triggerDate - new Date());
     } else {
+      let trigger;
+      if (reminder.repeat === "daily") {
+        trigger = {
+          hour: triggerDate.getHours(),
+          minute: triggerDate.getMinutes(),
+          repeats: true,
+        };
+      } else if (reminder.repeat === "weekly") {
+        trigger = {
+          weekday: triggerDate.getDay() + 1,
+          hour: triggerDate.getHours(),
+          minute: triggerDate.getMinutes(),
+          repeats: true,
+        };
+      } else if (reminder.repeat === "monthly") {
+        // Expo Notifications doesn't support "monthly" directly → simulate by rescheduling
+        trigger = {
+          day: triggerDate.getDate(),
+          hour: triggerDate.getHours(),
+          minute: triggerDate.getMinutes(),
+          repeats: true,
+        };
+      } else {
+        trigger = { date: triggerDate };
+      }
+
       await Notifications.scheduleNotificationAsync({
         content: { title: "Reminder", body: reminder.description },
-        trigger: { date: triggerDate },
+        trigger,
       });
     }
   };
@@ -151,18 +184,39 @@ const DailyReminders = () => {
     setReminders(updatedReminders);
   };
 
+  const startEditing = (reminder) => {
+    setSelectedDate(reminder.date);
+    setManualTime(reminder.time);
+    setDescription(reminder.description);
+    setRepeat(reminder.repeat);
+    setEditingId(reminder.id);
+  };
+
+  const resetForm = () => {
+    setSelectedDate(null);
+    setManualTime("");
+    setDescription("");
+    setRepeat(null);
+    setEditingId(null);
+  };
+
   const Reminder = ({ item }) => (
     <View style={styles.reminderContainer}>
       <Text style={styles.description}>{item.description}</Text>
       <Text style={styles.date}>
-        {item.date} - {item.time}
+        {item.date} - {item.time} ({item.repeat || "once"})
       </Text>
-      <TouchableOpacity
-        onPress={() => deleteReminder(item.id)}
-        style={styles.deleteButton}
-      >
-        <Text style={styles.deleteText}>Delete</Text>
-      </TouchableOpacity>
+      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+        <TouchableOpacity
+          onPress={() => startEditing(item)}
+          style={{ marginRight: 10 }}
+        >
+          <Text style={{ color: "yellow", fontWeight: "bold" }}>Edit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => deleteReminder(item.id)}>
+          <Text style={styles.deleteText}>Delete</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -176,7 +230,6 @@ const DailyReminders = () => {
     description: { color: COLORS.lightWhite, fontWeight: "bold" },
     date: { color: COLORS.darkText, fontSize: SIZES.small },
     input: {
-      //borderColor: COLORS.primary,
       borderWidth: 1,
       padding: SIZES.small,
       marginVertical: SIZES.small,
@@ -184,7 +237,6 @@ const DailyReminders = () => {
     selected: {
       fontSize: SIZES.medium,
       marginVertical: SIZES.small,
-      //color: COLORS.primary,
     },
     button: {
       backgroundColor: COLORS.primary,
@@ -198,7 +250,6 @@ const DailyReminders = () => {
     reminderHeader: {
       fontSize: SIZES.large,
       fontWeight: "bold",
-      //color: COLORS.primary,
       marginVertical: SIZES.medium,
     },
   });
@@ -210,10 +261,6 @@ const DailyReminders = () => {
         backgroundColor: isDark ? COLORS.darkBackground : COLORS.lightWhite,
       }}
     >
-      {/* <Stack.Screen options={{ 
-        // headerTitle: "Daily Reminders", 
-        header: () => <ScreenHeaderBtn />
-      }} /> */}
       <ScreenHeaderBtn />
       <ScrollView contentContainerStyle={{ padding: SIZES.medium }}>
         <Calendar
@@ -243,7 +290,27 @@ const DailyReminders = () => {
           style={[styles.input, themeStyles.input]}
         />
 
-        <Text style={[styles.selected, themeStyles.selected]}>Date: {selectedDate || "None"}</Text>
+        <TextInput
+          placeholder="Enter description"
+          value={description}
+          onChangeText={setDescription}
+          style={[styles.input, themeStyles.input]}
+        />
+
+        <Picker
+          selectedValue={repeat || ""}
+          onValueChange={(itemValue) => setRepeat(itemValue)}
+          style={styles.input}
+        >
+          <Picker.Item label="None" value="" />
+          <Picker.Item label="Daily" value="daily" />
+          <Picker.Item label="Weekly" value="weekly" />
+          <Picker.Item label="Monthly" value="monthly" />
+        </Picker>
+
+        <Text style={[styles.selected, themeStyles.selected]}>
+          Date: {selectedDate || "None"}
+        </Text>
         <Text style={[styles.selected, themeStyles.selected]}>
           Time:{" "}
           {manualTime ||
@@ -253,11 +320,22 @@ const DailyReminders = () => {
             })}
         </Text>
 
-        <TouchableOpacity onPress={handleAddReminder} style={styles.button}>
-          <Text style={styles.buttonText}>Add Reminder</Text>
+        <TouchableOpacity onPress={handleSaveReminder} style={styles.button}>
+          <Text style={styles.buttonText}>
+            {editingId ? "Update Reminder" : "Add Reminder"}
+          </Text>
         </TouchableOpacity>
 
-        <Text style={[styles.reminderHeader, themeStyles.reminderHeader]}>All Reminders:</Text>
+        <TouchableOpacity
+          onPress={resetForm}
+          style={[styles.button, { backgroundColor: "gray", marginTop: 10 }]}
+        >
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableOpacity>
+
+        <Text style={[styles.reminderHeader, themeStyles.reminderHeader]}>
+          All Reminders:
+        </Text>
         {reminders.length > 0 ? (
           reminders.map((rem) => <Reminder key={rem.id} item={rem} />)
         ) : (

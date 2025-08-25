@@ -1,6 +1,8 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
+import { useState, useEffect } from "react";
 import { COLORS, FONT, SIZES } from "../constants/theme";
 import { useTheme } from "../context/ThemeProvider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const getThemeStyles = (isDark) => ({
   userName: {
@@ -11,11 +13,29 @@ const getThemeStyles = (isDark) => ({
   },
 });
 
+const USER_DETAILS_KEY = "userDetails";
+
 const Welcome = ({ userDetails }) => {
   //console.log("userDetails", userDetails?.userName);
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const themeStyles = getThemeStyles(isDark);
+  const [profile, setProfile] = useState({ userName: "", photo: null });
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  const loadProfile = async () => {
+    try {
+      const savedProfile = await AsyncStorage.getItem(USER_DETAILS_KEY);
+      if (savedProfile) {
+        setProfile(JSON.parse(savedProfile));
+      }
+    } catch (error) {
+      console.log("Error loading profile:", error);
+    }
+  };
 
   const styles = StyleSheet.create({
     container: {
@@ -69,11 +89,25 @@ const Welcome = ({ userDetails }) => {
       width: "100%",
       marginTop: SIZES.medium,
     },
+    profileImage: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      marginBottom: 10,
+    },
   });
 
   return (
     <View>
       <View style={[styles.container]}>
+        <Image
+          source={
+            profile.photo
+              ? { uri: profile.photo }
+              : require("../assets/placeholder.png")
+          }
+          style={styles.profileImage}
+        />
         <Text style={[styles.userName, themeStyles.userName]}>
           Hello {userDetails?.userName}!
         </Text>
