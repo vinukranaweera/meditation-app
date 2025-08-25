@@ -19,8 +19,8 @@ const getThemeStyles = (isDark) => ({
       backgroundColor: isDark ? COLORS.darkBackground : COLORS.lightWhite,
     },
     text: {
-    color: isDark ? COLORS.darkText : COLORS.secondary,
-  }
+      color: isDark ? COLORS.darkText : COLORS.primary,
+    }
   });
 
 const Favourites = () => {
@@ -57,7 +57,7 @@ const Favourites = () => {
     headerTitle: {
       fontSize: SIZES.large,
       fontFamily: FONT.medium,
-      color: COLORS.primary,
+      //color: COLORS.primary,
       textAlign: "center",
       marginTop: 20,
     },
@@ -72,7 +72,7 @@ const Favourites = () => {
           {isLoading ? (
             <ActivityIndicator size="large" color={COLORS.primary} />
           ) : favorites.length === 0 ? (
-            <Text style={styles.headerTitle}>No favorite items found.</Text>
+            <Text style={[styles.headerTitle, themeStyles.text]}>No favorite items found.</Text>
           ) : (
             <>
               <Text
@@ -80,6 +80,7 @@ const Favourites = () => {
                   textAlign: "center",
                   color: "#FF4500",
                   fontWeight: "bold",
+                  fontSize: SIZES.xLarge
                 }}
               >
                 My Favourite Exercises

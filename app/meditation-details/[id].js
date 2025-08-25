@@ -11,13 +11,8 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
-
-import {
-  MeditationTopDisplay,
-  About,
-  Footer,
-  Tabs,
-} from "../../components";
+import { MeditationTopDisplay, About, Footer, Tabs } from "../../components";
+import { useTheme } from "../../context/ThemeProvider";
 // import MeditationTopDisplay from "../../components/MeditationTopDisplay/MeditationTopDisplay";
 // import About from "../../components/About/About";
 // import Footer from "../../components/Footer/Footer";
@@ -27,6 +22,18 @@ import { COLORS, icons, SIZES } from "../../constants";
 import useFetch from "../../hook/useFetch";
 
 const tabs = ["About", "Instructions"];
+
+const getThemeStyles = (isDark) => ({
+  background: {
+    backgroundColor: isDark ? COLORS.darkBackground : COLORS.lightWhite,
+  },
+  text: {
+    color: isDark ? COLORS.darkText : COLORS.lightText,
+  },
+  description: {
+    color: isDark ? COLORS.darkText : COLORS.primary,
+  }
+});
 
 const MeditationDetails = () => {
   const params = useGlobalSearchParams();
@@ -38,6 +45,10 @@ const MeditationDetails = () => {
 
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [refreshing, setRefreshing] = useState(false);
+
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const themeStyles = getThemeStyles(isDark);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -56,7 +67,7 @@ const MeditationDetails = () => {
     } else if (activeTab === "Instructions") {
       return (
         <View style={styles.specificsContainer}>
-          <Text style={styles.specificsTitle}>Instructions:</Text>
+          <Text style={[styles.specificsTitle, themeStyles.description]}>Instructions:</Text>
           <View style={styles.pointsContainer}>
             {(meditationItem.instructions ?? ["N/A"]).map((item, index) => (
               <View style={styles.pointWrapper} key={index}>
@@ -115,7 +126,7 @@ const MeditationDetails = () => {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={[{ flex: 1 }, themeStyles.background]}>
       <ScreenHeaderBtn detailPage={true} handleShare={onShare} />
 
       <ScrollView
@@ -127,9 +138,9 @@ const MeditationDetails = () => {
         {isLoading ? (
           <ActivityIndicator size="large" color={COLORS.primary} />
         ) : error ? (
-          <Text>Something went wrong</Text>
+          <Text style={themeStyles.text}>Something went wrong</Text>
         ) : !meditationItem || meditationItem.length === 0 ? (
-          <Text>No data available</Text>
+          <Text style={themeStyles.text}>No data available</Text>
         ) : (
           <View style={{ padding: SIZES.medium, paddingBottom: 100 }}>
             <MeditationTopDisplay

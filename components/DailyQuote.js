@@ -11,6 +11,7 @@ const getThemeStyles = (isDark) => ({
 
 const DailyQuote = () => {
   const [quote, setQuote] = useState("");
+  const [author, setAuthor] = useState("");
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -23,6 +24,7 @@ const DailyQuote = () => {
       if (response.ok) {
         const data = await response.json();
         setQuote(data.quote);
+        setAuthor(data.author);
       } else {
         console.error("Error fetching quote:", response.status);
       }
@@ -61,7 +63,7 @@ const DailyQuote = () => {
         <ActivityIndicator size="small" color="#0000ff" />
       ) : (
         <>
-          <Text style={[styles.quoteText, themeStyles.quoteText]}>"{quote}"</Text>
+          <Text style={[styles.quoteText, themeStyles.quoteText]}>"{quote}" - {author}</Text>
         </>
       )}
     </View>

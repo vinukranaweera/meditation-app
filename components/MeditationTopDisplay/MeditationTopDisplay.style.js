@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   meditationTitle: {
     fontSize: SIZES.large,
-    color: COLORS.primary,
+    //color: COLORS.primary,
     fontFamily: FONT.bold,
     textAlign: "center",
   },
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   meditationName: {
     fontSize: SIZES.medium - 2,
-    color: COLORS.primary,
+    //color: COLORS.primary,
     fontFamily: FONT.medium,
   },
   durationBox: {
