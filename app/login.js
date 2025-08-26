@@ -3,11 +3,10 @@ import {
   View,
   SafeAreaView,
   Image,
-  Alert,
-  Platform,
   Text,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
@@ -16,45 +15,49 @@ import { COLORS, icons, SHADOWS } from "../constants";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({}); // store validation errors
   const router = useRouter();
 
-  const showAlert = (title, message) => {
-    if (Platform.OS === "web") {
-      window.alert(`${title}\n\n${message}`);
-    } else {
-      Alert.alert(title, message);
-    }
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
   };
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      showAlert("Validation Error", "Please fill in all fields.");
-      return;
-    }
+    let newErrors = {};
 
-    const userDetails = { email, password, token: "sample-token" };
+    if (!email) newErrors.email = "Email is required.";
+    else if (!validateEmail(email)) newErrors.email = "Invalid email format.";
 
-    console.log("userDetails", userDetails);
+    if (!password) newErrors.password = "Password is required.";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
+    setLoading(true);
 
     try {
-      const detailsDatafromSignup = await AsyncStorage.getItem("userDetails");
-      if (detailsDatafromSignup) {
-        const parsedDetails = JSON.parse(detailsDatafromSignup);
+      const storedUser = await AsyncStorage.getItem("userDetails");
 
-        if (
-          userDetails.email === parsedDetails.email &&
-          userDetails.password === parsedDetails.password
-        ) {
-          router.push("/home");
-        } else {
-          showAlert("Error", "Incorrect email or password.");
-        }
+      if (!storedUser) {
+        setErrors({ general: "No user found. Please sign up first." });
+        return;
+      }
+
+      const parsedUser = JSON.parse(storedUser);
+
+      if (email === parsedUser.email && password === parsedUser.password) {
+        router.push("/home");
       } else {
-        showAlert("Error", "No user details found in AsyncStorage.");
+        setErrors({ general: "Incorrect email or password." });
       }
     } catch (error) {
-      console.error("Error accessing AsyncStorage", error);
-      showAlert("Error", "Something went wrong while logging in.");
+      setErrors({ general: "Something went wrong. Please try again." });
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,7 +71,9 @@ const Login = () => {
           headerTitle: "",
         }}
       />
+
       <View style={{ padding: 20 }}>
+        {/* Logo / Icon */}
         <View
           style={{
             padding: 20,
@@ -83,65 +88,48 @@ const Login = () => {
         >
           <Image
             source={icons.menu}
-            style={{
-              width: 50,
-              height: 50,
-              marginBottom: 20,
-            }}
+            style={{ width: 50, height: 50 }}
           />
         </View>
 
-        {/* Form Component */}
+        {/* Form */}
         <View style={{ marginTop: 20 }}>
-          <View style={{ marginBottom: 20 }}>
-            <TextInput
-              style={{
-                borderWidth: 1,
-                borderColor: "#ccc",
-                padding: 10,
-                borderRadius: 5,
-                marginBottom: 10,
-              }}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Email"
-            />
-            <TextInput
-              style={{
-                borderWidth: 1,
-                borderColor: "#ccc",
-                padding: 10,
-                borderRadius: 5,
-                marginBottom: 10,
-              }}
-              value={password}
-              secureTextEntry={true}
-              onChangeText={setPassword}
-              placeholder="Password"
-            />
-          </View>
+          <TextInput
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Email"
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          {errors.email && <Text style={styles.error}>{errors.email}</Text>}
+
+          <TextInput
+            style={styles.input}
+            value={password}
+            secureTextEntry
+            onChangeText={setPassword}
+            placeholder="Password"
+          />
+          {errors.password && <Text style={styles.error}>{errors.password}</Text>}
+
+          {errors.general && <Text style={styles.error}>{errors.general}</Text>}
+
           <TouchableOpacity
-            style={{
-              backgroundColor: COLORS.primary,
-              padding: 15,
-              borderRadius: 5,
-              alignItems: "center",
-            }}
+            style={[styles.button, { backgroundColor: loading ? "#999" : COLORS.primary }]}
             onPress={handleLogin}
+            disabled={loading}
           >
-            <Text style={{ color: "#fff", fontWeight: "bold" }}>Login</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={{ color: "#fff", fontWeight: "bold" }}>Login</Text>
+            )}
           </TouchableOpacity>
         </View>
 
-        {/* Additional Options */}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            margin: 10,
-          }}
-        >
+        {/* Sign Up Redirect */}
+        <View style={styles.loginRow}>
           <Text style={{ marginRight: 5 }}>Don't have an account?</Text>
           <TouchableOpacity onPress={() => router.push("/signup")}>
             <Text style={{ color: "blue" }}>Sign Up</Text>
@@ -150,6 +138,33 @@ const Login = () => {
       </View>
     </SafeAreaView>
   );
+};
+
+const styles = {
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  error: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
+  },
+  button: {
+    padding: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  loginRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
 };
 
 export default Login;
